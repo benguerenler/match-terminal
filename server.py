@@ -2,62 +2,9 @@ import socket
 import sys
 import threading
 import json
-
-HOST = ''
-PORT = 8888
-
-lock = threading.Lock()
-
-class Service(object):
-    def __init__(self, serviceid="", message="", amount="", deadline="", cancellable="", requester="", responders=[]):
-        self._requester = requester
-        self._message = message
-        self._amount = amount
-        self._deadline = deadline
-        self._cancellable = cancellable
-        self._responders = responders
-        self._serviceid = serviceid
-
-class User(object):
-    def __init__(self, userid=None, name="", email="", skills=[], conn=None):
-        self._userid = userid
-        self._name = name
-        self._email = email
-        self._skills = skills
-        self._conn = conn
-
-    @property
-    def conn(self):
-        return self._conn
-
-    @conn.setter
-    def conn(self, value):
-        with lock:
-            self._conn = value
-
-    @property
-    def name(self):
-        return self._name
-
-class Database(object):
-    def __init__(self):
-        self._users = {"1": User("1", "Kiko Fernandez", "kiko.fernandez@it.uu.se",
-                            ["computer", "no-questions-asked", "sports", "beer"], None),
-                       "2": User("2", "Albert", "", ["languages", "computer", "javascript"], None)}
-        self._services = []
-
-    @property
-    def users(self):
-        return self._users
-
-    def user(self, id):
-        return self._users.get(id)
-
-    @property
-    def services(self):
-        return self._services
-
-
+from db import Database
+from models import Service
+from config import HOST, PORT
 
 class Server(object):
     def __init__(self):
@@ -94,6 +41,7 @@ class Server(object):
         data = json.loads(conn.recv(1024))
         service = Service(**data)
         self.db.services.append(service)
+        print "Request: '%s', %s received from user %s" % (service.short_message, service.amount, userid)
 
     def start(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

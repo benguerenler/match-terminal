@@ -2,6 +2,7 @@
 import socket
 import json
 import random
+from config import HOST, PORT
 
 class Client:
 
@@ -21,20 +22,6 @@ class Client:
         self.socket.shutdown(1)
         self.socket.close()
 
-    def post(self):
-        # Tell the server p
-        self.socket.sendall("p")
-        self.socket.sendall(self.userid)
-
-        message = raw_input("Write your message: ")
-        amount = raw_input("amount to charge: ")
-        deadline = raw_input("deadline: ")
-        cancellable = raw_input("cancellable? [Y/n]")
-        servid = random.randint(1, 1000000)
-        data = json.dumps({"serviceid": servid, "message": message, "amount": amount, "deadline": deadline, "cancellable": cancellable})
-
-        self.socket.sendall(data)
-
     def pending(self):
         pass
 
@@ -42,7 +29,7 @@ class Client:
         pass
 
     def start(self):
-        self.socket.connect(("", 8888))
+        self.socket.connect((HOST, PORT))
         data = self.socket.recv(1024)
         print data
 
@@ -59,14 +46,12 @@ class Client:
 
         while True:
             print "Please use one of the following commands to:\n" \
-                  "[p] Post a new service\n" \
                   "[r] Read your pending requests\n" \
                   "[l] list all\n" \
                   "[x] Exit"
 
             option = raw_input()
             if option == "x": self.exit()
-            elif option == "p": self.post()
             elif option == "r": self.pending()
             elif option == "l": self.list_all()
             else: pass
