@@ -76,6 +76,16 @@ class Requester(object):
                        serviceid=servid, requester=self.userid)
         self.socket.sendall(json.dumps(data.formatting()))
 
+    def list_all(self):
+        self.socket.sendall("l")
+
+        data = self.socket.recv(2048)
+        services = [Service(**service) for service in json.loads(data)]
+        print "Listing all requests"
+        for service in services:
+            print "-----------------------------------"
+            print "Amount to receive: %s\nDescription: %s\nDeadline: %s" % (service.amount, service.message, service.deadline)
+
     def start(self):
         self.socket.connect((HOST, PORT))
         print self.socket.recv(1024)

@@ -31,7 +31,7 @@ class Server(object):
             while (True):
                 option = conn.recv(1)
                 if option == "p": self.post(conn)
-                elif (option == "l"): self.list_all(conn)
+                elif option == "l": self.list_all(conn)
                 else: pass
 
         except socket.error as err:
@@ -42,6 +42,10 @@ class Server(object):
         service = Service(**data)
         self.db.services.append(service)
         print "Request: '%s', %s received from user %s" % (service.short_message, service.amount, service.requester)
+
+    def list_all(self, conn):
+        conn.sendall(json.dumps([service.formatting() for service in self.db.services]))
+        print "Requesting services"
 
 
     def start(self):
