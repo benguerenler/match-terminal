@@ -5,8 +5,9 @@ lock = threading.Lock()
 
 
 class ABCJSON(object):
-    def to_json(self):
-        raise NotImplementedError()
+
+    def formatting(self):
+        return {key[1:]: value for key, value in self.__dict__.iteritems()}
 
 
 class Service(ABCJSON):
@@ -36,17 +37,15 @@ class Service(ABCJSON):
         return self._amount
 
     @property
+    def deadline(self):
+        return self._deadline
+
+    @property
     def requester(self):
         return self._requester
 
-    def to_json(self):
-        return json.dumps({'requester': self.requester,
-                           'message': self.message,
-                           'amount': self.amount,
-                           'deadline': self._deadline,
-                           'cancellable': self._cancellable,
-                           'responders': self._responders,
-                           'serviceid': self._serviceid})
+    def formatting(self):
+        return super(Service, self).formatting()
 
 
 class User(ABCJSON):
@@ -74,8 +73,5 @@ class User(ABCJSON):
     def userid(self):
         return self._userid
 
-    def to_json(self):
-        return json.dumps({'userid': self._userid,
-                           'name': self._name,
-                           'email': self._email,
-                           'skills': self._skills})
+    def formatting(self):
+        return super(Service, self).formatting()

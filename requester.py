@@ -72,10 +72,9 @@ class Requester(object):
         servid = random.randint(1, 1000000)
 
         # Create service object
-        data = Service(message=message, amount=amount, deadline=deadline, cancellable=cancellable, serviceid=servid)
-        self.socket.sendall(data.to_json())
-
-
+        data = Service(message=message, amount=amount, deadline=deadline, cancellable=cancellable,
+                       serviceid=servid, requester=self.userid)
+        self.socket.sendall(json.dumps(data.formatting()))
 
     def start(self):
         self.socket.connect((HOST, PORT))
