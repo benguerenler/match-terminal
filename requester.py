@@ -62,45 +62,47 @@ class Requester(object):
     def post(self):
         # Tell the server p
         self.socket.sendall("p")
-        self.socket.sendall(self.userid)
 
         message = self.get_input(Requester.MESSAGE)
         amount = self.get_input(Requester.PRICE)
         deadline = self.get_input(Requester.DEADLINE)
         cancellable = self.get_input(Requester.CANCELLABLE)
         servid = random.randint(1, 1000000)
-        data = json.dumps({"serviceid": servid, "message": message, "amount": amount, "deadline": deadline, "cancellable": cancellable})
+        # Create service object
+        data = json.dumps({"serviceid": servid,
+                           "message": message,
+                           "amount": amount,
+                           "deadline": deadline,
+                           "cancellable": cancellable,
+                           "requester": self.userid})
 
         self.socket.sendall(data)
 
 
     def start(self):
         self.socket.connect((HOST, PORT))
-        data = self.socket.recv(1024)
-        print data
+        print self.socket.recv(1024)
 
         # Enter id
         # TODO: Add validation
-        self.userid = raw_input()
+        self.userid = raw_input("> ")
         self.socket.sendall(self.userid)
 
         # receive greeting
-        print self.socket.recv(1024)
+        print "\n" + self.socket.recv(1024)
 
         while True:
-            print "Please use one of the following commands to:\n" \
+            print "\nPlease use one of the following commands to:\n" \
                   "[p] Post a new service\n" \
                   "[r] Read your services\n"\
                   "[l] list all\n" \
                   "[x] Exit\n"
 
-            option = raw_input()
+            option = raw_input("> ")
             if option == "x": self.exit()
             elif option == "p": self.post()
             elif option == "l": self.list_all()
             else: pass
-
-
 
 if __name__ == "__main__":
     requester = Requester()

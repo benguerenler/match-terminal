@@ -28,6 +28,11 @@ class Service(object):
     def amount(self):
         return self._amount
 
+    @property
+    def requester(self):
+        return self._requester
+
+
 class User(object):
     def __init__(self, userid=None, name="", email="", skills=[], conn=None):
         self._userid = userid
@@ -48,3 +53,7 @@ class User(object):
     @property
     def name(self):
         return self._name
+
+    @property
+    def userid(self):
+        return self._userid

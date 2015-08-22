@@ -23,25 +23,24 @@ class Server(object):
                     print "Please try again"
 
             reply = "Hi " + self.db.user(id_user).name
+            self.db.user(id_user).conn = conn
             conn.sendall(reply)
 
             while (True):
                 option = conn.recv(1)
                 if option == "p": self.post(conn)
-                elif (option == "r"): self.fetch_requests()
+                elif (option == "l"): self.list_all(conn)
                 else: pass
 
         except socket.error as err:
             pass
 
     def post(self, conn):
-        userid = conn.recv(5)
-        user = self.db.user(userid)
-        user.conn = conn
         data = json.loads(conn.recv(1024))
         service = Service(**data)
         self.db.services.append(service)
-        print "Request: '%s', %s received from user %s" % (service.short_message, service.amount, userid)
+        print "Request: '%s', %s received from user %s" % (service.short_message, service.amount, service.requester)
+
 
     def start(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

@@ -1,4 +1,4 @@
-# Match app
+# Match application
 
 Match application for the course Advanced Software Design.
 This has been implemented using Stream Sockets on top of TCP.
@@ -8,14 +8,32 @@ To start the Match server type:
     python server.py
 
 
-To start the client type:
+To start the requester client type:
 
-    python client.py
+    python requester.py
 
+To start the responder client type:
+
+    python responder.py
+
+
+## How does it work?
+
+There is a centralized server, **Match Server**, to which requesters and responders
+connect to. The **requesters** are clients in need of a service, who are willing
+to pay an amount of money in order to get help to carry the advertised task.
+**Responders** are customers who signed up in the **Match server** and are
+waiting to receive an offer where they might be able to help. **Responders**
+do not choose the offer they think they fit best, the **Match server** AI
+algorithm determines who is the best candidate and passes the offer on.
+
+## Use cases
+
+Read description of the assignments
 
 ## TODO
 
-- the client should be able to post new services
+- ~~the client should be able to post new services~~
 
 - the client should be able to check if he has a request
 

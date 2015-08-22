@@ -50,7 +50,7 @@ class Client:
                   "[l] list all\n" \
                   "[x] Exit"
 
-            option = raw_input()
+            option = raw_input("> ")
             if option == "x": self.exit()
             elif option == "r": self.pending()
             elif option == "l": self.list_all()
