@@ -1,9 +1,8 @@
-import socket
 import random
 import json
 from datetime import datetime
-from config import HOST, PORT
 from models import Service
+from abcclient import ABCClient
 
 
 def validate_datetime(d):
@@ -14,7 +13,7 @@ def validate_datetime(d):
         return False
 
 
-class Requester(object):
+class Requester(ABCClient):
     MESSAGE = 1
     PRICE = 2
     CANCELLABLE = 3
@@ -31,21 +30,7 @@ class Requester(object):
                  DEADLINE: validate_datetime}
 
     def __init__(self, *args, **kwargs):
-        super(Requester, self).__init__()
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self._userid = None
-
-    @property
-    def userid(self):
-        return self._userid
-
-    @userid.setter
-    def userid(self, userid):
-        self._userid = userid
-
-    def exit(self):
-        self.socket.shutdown(socket.SHUT_RDWR)
-        self.socket.close()
+        super(Requester, self).__init__(*args, **kwargs)
 
     def validate(func):
         def _decorator(this, kind):
@@ -87,20 +72,10 @@ class Requester(object):
         for service in services:
             print "-----------------------------------"
             print "Amount to receive: %s\nDescription: %s\nDeadline: %s" % (
-            service.amount, service.message, service.deadline)
+                service.amount, service.message, service.deadline)
 
     def start(self):
-        self.socket.connect((HOST, PORT))
-        print self.socket.recv(1024)
-
-        # Enter id
-        # TODO: Add validation
-        self.userid = raw_input("> ")
-        self.socket.sendall(self.userid)
-
-        # receive greeting
-        print "\n" + self.socket.recv(1024)
-
+        super(Requester, self).start()
         while True:
             print "\nPlease use one of the following commands to:\n" \
                   "[p] Post a new service\n" \

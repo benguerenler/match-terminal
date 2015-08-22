@@ -51,14 +51,15 @@ class Server(object):
         print "Request #%s: '%s', %s received from user %s" % (counter, service.short_message, service.amount, service.requester)
         print "Searching for a match..."
 
+        selected_match = "1" if int(service.requester)+1 > len(self.db.users) else str(int(service.requester)+1)
+        responder = self.db.user(selected_match)
+        print "Request #%s match to user %s" % (counter, responder.userid)
 
-
-        print "Request #%s matched to user " % (counter)
+        # TODO: save pending request to user's mailbox
 
     def list_all(self, conn):
         conn.sendall(json.dumps([service.formatting() for service in self.db.services]))
         print "Requesting services"
-
 
     def start(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
