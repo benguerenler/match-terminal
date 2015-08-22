@@ -5,12 +5,14 @@ from datetime import datetime
 from config import HOST, PORT
 from models import Service
 
+
 def validate_datetime(d):
     try:
         datetime.strptime(d, "%Y-%m-%d")
         return True
     except ValueError:
         return False
+
 
 class Requester(object):
     MESSAGE = 1
@@ -26,8 +28,7 @@ class Requester(object):
     VALIDATOR = {MESSAGE: lambda x: x != "",
                  PRICE: lambda x: x.isdigit(),
                  CANCELLABLE: lambda x: x in ("Y", "Yes", "y", "N", "n", "no"),
-                 DEADLINE: validate_datetime }
-
+                 DEADLINE: validate_datetime}
 
     def __init__(self, *args, **kwargs):
         super(Requester, self).__init__()
@@ -43,7 +44,7 @@ class Requester(object):
         self._userid = userid
 
     def exit(self):
-        self.socket.shutdown(1)
+        self.socket.shutdown(socket.SHUT_RDWR)
         self.socket.close()
 
     def validate(func):
@@ -54,6 +55,7 @@ class Requester(object):
                 return data
             else:
                 return _decorator(this, kind)
+
         return _decorator
 
     @validate
@@ -84,7 +86,8 @@ class Requester(object):
         print "Listing all requests"
         for service in services:
             print "-----------------------------------"
-            print "Amount to receive: %s\nDescription: %s\nDeadline: %s" % (service.amount, service.message, service.deadline)
+            print "Amount to receive: %s\nDescription: %s\nDeadline: %s" % (
+            service.amount, service.message, service.deadline)
 
     def start(self):
         self.socket.connect((HOST, PORT))
@@ -101,15 +104,21 @@ class Requester(object):
         while True:
             print "\nPlease use one of the following commands to:\n" \
                   "[p] Post a new service\n" \
-                  "[r] Read your services\n"\
+                  "[r] Read your services\n" \
                   "[l] list all\n" \
                   "[x] Exit\n"
 
             option = raw_input("> ")
-            if option == "x": self.exit()
-            elif option == "p": self.post()
-            elif option == "l": self.list_all()
-            else: pass
+            if option == "x":
+                self.exit()
+                break
+            elif option == "p":
+                self.post()
+            elif option == "l":
+                self.list_all()
+            else:
+                pass
+
 
 if __name__ == "__main__":
     requester = Requester()

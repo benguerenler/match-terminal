@@ -1,8 +1,6 @@
 import threading
-import json
 
 lock = threading.Lock()
-
 
 class ABCJSON(object):
 

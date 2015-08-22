@@ -23,7 +23,8 @@ class Responder:
         self.socket.close()
 
     def pending(self):
-        pass
+        self.socket.sendall("r")
+        self.socket.sendall(self.userid)
 
     def list_all(self):
         pass

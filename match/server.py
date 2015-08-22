@@ -6,8 +6,11 @@ from db import Database
 from models import Service
 from config import HOST, PORT
 
+lock = threading.Lock()
 
 class Server(object):
+
+    REQUEST_COUNTER = 0
 
     def __init__(self):
         self.db = Database()
@@ -41,7 +44,16 @@ class Server(object):
         data = json.loads(conn.recv(1024))
         service = Service(**data)
         self.db.services.append(service)
-        print "Request: '%s', %s received from user %s" % (service.short_message, service.amount, service.requester)
+        with lock:
+            Server.REQUEST_COUNTER += 1
+            counter = Server.REQUEST_COUNTER
+
+        print "Request #%s: '%s', %s received from user %s" % (counter, service.short_message, service.amount, service.requester)
+        print "Searching for a match..."
+
+
+
+        print "Request #%s matched to user " % (counter)
 
     def list_all(self, conn):
         conn.sendall(json.dumps([service.formatting() for service in self.db.services]))
