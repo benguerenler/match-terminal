@@ -6,7 +6,9 @@ from db import Database
 from models import Service
 from config import HOST, PORT
 
+
 class Server(object):
+
     def __init__(self):
         self.db = Database()
 

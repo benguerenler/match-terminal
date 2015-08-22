@@ -3,6 +3,7 @@ import random
 import json
 from datetime import datetime
 from config import HOST, PORT
+from models import Service
 
 def validate_datetime(d):
     try:
@@ -63,20 +64,17 @@ class Requester(object):
         # Tell the server p
         self.socket.sendall("p")
 
+        # Fetch service information from requester
         message = self.get_input(Requester.MESSAGE)
         amount = self.get_input(Requester.PRICE)
         deadline = self.get_input(Requester.DEADLINE)
         cancellable = self.get_input(Requester.CANCELLABLE)
         servid = random.randint(1, 1000000)
-        # Create service object
-        data = json.dumps({"serviceid": servid,
-                           "message": message,
-                           "amount": amount,
-                           "deadline": deadline,
-                           "cancellable": cancellable,
-                           "requester": self.userid})
 
-        self.socket.sendall(data)
+        # Create service object
+        data = Service(message=message, amount=amount, deadline=deadline, cancellable=cancellable, serviceid=servid)
+        self.socket.sendall(data.to_json())
+
 
 
     def start(self):

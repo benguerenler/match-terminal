@@ -4,7 +4,7 @@ import json
 import random
 from config import HOST, PORT
 
-class Client:
+class Responder:
 
     def __init__(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -58,5 +58,5 @@ class Client:
 
 
 if __name__ == "__main__":
-    client = Client()
+    client = Responder()
     client.start()
