@@ -1,9 +1,9 @@
-from abcclient import ABCClient
-from utils import decorator
-import db
-import models
 import json
-import config
+
+from utils.abcclient import ABCClient
+from utils import decorator
+from backend import db, models
+from utils import config
 
 
 class Responder(ABCClient):
@@ -29,12 +29,12 @@ class Responder(ABCClient):
                 print "Request received from Match\n" \
                       "Description: %s \n" \
                       "Value: %s\n" % (offer.message, offer.amount)
-                print
                 response = self.get_input(Responder.ACCEPT_OR_DECLINE).lower()
 
                 if response == "a":
                     print "Request accepted"
-                    print "Request owner is %s (userid %s)" % (db.Database().user(offer.requester).name, offer.requester)
+                    print "Request owner is %s (userid %s)" % (
+                        db.Database().user(offer.requester).name, offer.requester)
                 else:
                     "print Request rejected"
 
@@ -55,7 +55,8 @@ class Responder(ABCClient):
 
             option = raw_input("> ")
             if option == "x":
-                self.exit(); break
+                self.exit();
+                break
             elif option == "u":
                 self.check_pending()
             elif option == "l":

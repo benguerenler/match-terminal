@@ -1,5 +1,3 @@
-__author__ = 'kikofernandezreyes'
-
 def validate(func):
     def _decorator(this, kind):
         data = func(this, kind)

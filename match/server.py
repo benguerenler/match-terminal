@@ -2,10 +2,12 @@ import socket
 import sys
 import threading
 import json
-import config
-from db import Database
-from models import Request
-from match import Matcher, NextInLineStrategy
+
+from utils import config
+from backend.db import Database
+from backend.models import Request
+from backend.match import Matcher
+from backend.strategies import NextInLineStrategy
 
 
 class Server(object):

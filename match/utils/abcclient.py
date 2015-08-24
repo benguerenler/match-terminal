@@ -1,7 +1,7 @@
-
 import socket
+
 from config import HOST, PORT
-from db import Database
+from backend.db import Database
 
 
 class ABCClient(object):
