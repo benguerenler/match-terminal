@@ -9,7 +9,8 @@ class ABCJSON(object):
 
 
 class Service(ABCJSON):
-    def __init__(self, serviceid="", message="", amount="", deadline="", cancellable="", requester="", responders=[]):
+    def __init__(self, serviceid="", message="", amount="", deadline="", cancellable="",
+                       requester="", responders=[], waiting_list=[]):
         self._requester = requester
         self._message = message
         self._amount = amount
@@ -17,6 +18,11 @@ class Service(ABCJSON):
         self._cancellable = cancellable
         self._responders = responders
         self._serviceid = serviceid
+        self._waiting_list = waiting_list
+
+    @property
+    def serviceid(self):
+        return self._serviceid
 
     @property
     def message(self):
@@ -39,19 +45,28 @@ class Service(ABCJSON):
         return self._deadline
 
     @property
-    def requester(self):
-        return self._requester
+    def waiting_list(self):
+        return self._waiting_list
+
+    @property
+    def responders(self):
+        return self._responders
+
+    @responders.setter
+    def responders(self, responders):
+        self._responders = responders
 
     def formatting(self):
         return super(Service, self).formatting()
 
 
 class User(ABCJSON):
-    def __init__(self, userid=None, name="", email="", skills=[], conn=None):
+    def __init__(self, userid=None, name="", email="", skills=[], conn=None, pending=[]):
         self._userid = userid
         self._name = name
         self._email = email
         self._skills = skills
+        self._pending = pending
         self._conn = conn
 
     @property
@@ -71,5 +86,13 @@ class User(ABCJSON):
     def userid(self):
         return self._userid
 
+    @property
+    def pending(self):
+        return self._pending
+
+    @pending.setter
+    def pending(self, services):
+        self._pending = services
+
     def formatting(self):
-        return super(Service, self).formatting()
+        return super(User, self).formatting()

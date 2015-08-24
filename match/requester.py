@@ -1,8 +1,10 @@
-import random
 import json
+import config
+import db
 from datetime import datetime
 from models import Service
 from abcclient import ABCClient
+from utils import decorator
 
 
 def validate_datetime(d):
@@ -19,8 +21,8 @@ class Requester(ABCClient):
     CANCELLABLE = 3
     DEADLINE = 4
 
-    INFO = {MESSAGE: "Write your message",
-            PRICE: "Payment (SEK)",
+    INFO = {MESSAGE: "Enter textual description",
+            PRICE: "How much will you pay",
             CANCELLABLE: "Can it be cancelled if there are not enough people? [Y/n]",
             DEADLINE: "Date for the deadline (format: YYYY-MM-DD)"}
 
@@ -32,20 +34,10 @@ class Requester(ABCClient):
     def __init__(self, *args, **kwargs):
         super(Requester, self).__init__(*args, **kwargs)
 
-    def validate(func):
-        def _decorator(this, kind):
-            data = func(this, kind)
-            validator = Requester.VALIDATOR.get(kind)
-            if validator(data):
-                return data
-            else:
-                return _decorator(this, kind)
-
-        return _decorator
-
-    @validate
+    @decorator.validate
     def get_input(self, kind):
-        return raw_input(Requester.INFO.get(kind) + ":")
+        print Requester.INFO.get(kind) + ":"
+        return raw_input("> ")
 
     def post(self):
         # Tell the server p
@@ -56,17 +48,18 @@ class Requester(ABCClient):
         amount = self.get_input(Requester.PRICE)
         deadline = self.get_input(Requester.DEADLINE)
         cancellable = self.get_input(Requester.CANCELLABLE)
-        servid = random.randint(1, 1000000)
+        servid = db.inc_service_counter()
 
         # Create service object
         data = Service(message=message, amount=amount, deadline=deadline, cancellable=cancellable,
                        serviceid=servid, requester=self.userid)
         self.socket.sendall(json.dumps(data.formatting()))
+        print "Request posted to Match system"
 
     def list_all(self):
         self.socket.sendall("l")
 
-        data = self.socket.recv(2048)
+        data = self.socket.recv(config.POST_SIZE)
         services = [Service(**service) for service in json.loads(data)]
         print "Listing all requests"
         for service in services:
@@ -78,8 +71,7 @@ class Requester(ABCClient):
         super(Requester, self).start()
         while True:
             print "\nPlease use one of the following commands to:\n" \
-                  "[p] Post a new service\n" \
-                  "[r] Read your services\n" \
+                  "[p] Post a new request\n" \
                   "[l] list all\n" \
                   "[x] Exit\n"
 
