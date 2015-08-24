@@ -1,0 +1,16 @@
+[Socket]1<-1[Server]
+[Server]1-1>[Database]
+[Server]++1-1>[Match]
+[Match]++1-1>[Strategy]
+
+[ABCClient]*-1>[Socket]
+[ABCClient]^-[Responder]
+[ABCClient]^-[Requester]
+
+[Requester]uses -.- *>[Request]
+[Requester]*-1>[Database]
+[Database]++-*>[User]
+[Database]++-*>[Request]
+
+[Responder]*-1>[Database]
+[Responder]uses -.- *>[Request]

@@ -16,6 +16,13 @@ To start the responder client type:
 
     python responder.py
 
+## Class diagram
+
+![uml diagram](diagram.png)
+
+The diagram has been generated using yUML (in file `diagram.yUML`). To generate the
+diagram, visit [yuml.me](http://yuml.me/diagram/scruffy/class/draw) and
+paste the content of the `diagram.yUML` file.
 
 ## How does it work?
 
