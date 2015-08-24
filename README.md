@@ -35,8 +35,8 @@ Read description of the assignments
 
 - ~~the client should be able to post new services~~
 
-- the client should be able to check if he has a request
+- ~~the client should be able to check if he has a request~~
 
-- the client should be able to confirm requests
+- ~~the client should be able to confirm requests~~
 
-- the server sends requests to the clients based on affinity
+- ~~the server sends requests to the clients based on affinity~~
