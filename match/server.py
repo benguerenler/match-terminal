@@ -20,12 +20,7 @@ class Server(object):
             conn.send("Connected to Match system. Please enter your id first")
 
             # Be polite Server!
-            while True:
-                id_user = conn.recv(config.USERID_SIZE)
-                if self.db.user(id_user) is not None:
-                    break
-                else:
-                    print "Please try again"
+            id_user = conn.recv(config.USERID_SIZE)
 
             # log userid
             print "User id %s logged in" % id_user

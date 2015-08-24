@@ -1,6 +1,7 @@
 
 import socket
 from config import HOST, PORT
+from db import Database
 
 
 class ABCClient(object):
@@ -23,16 +24,20 @@ class ABCClient(object):
 
     def start(self):
         self.socket.connect((HOST, PORT))
-        data = self.socket.recv(1024)
-        print data
+        print self.socket.recv(1024)
 
         # Enter id
-        while True:
-            self.userid = raw_input("> ")
-            if self.userid != "":
-                self.socket.sendall(self.userid)
-                break
-            else: print "Try again\n"
+        valid = False
+        while not valid:
+            userid = raw_input("> ")
+            if not userid.isdigit():
+                print "the id you typed is not a digit"
+            elif Database().user(userid) is None:
+                print "there is no user in the database with id %s" % self.userid
+            else:
+                self.userid = userid
+                valid = True
 
+        self.socket.sendall(self.userid)
         # receive greeting
         print "\n" + self.socket.recv(1024)
