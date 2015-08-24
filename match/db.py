@@ -5,22 +5,22 @@ import threading
 _users = {"1": User("1", "Kiko Fernandez", "kiko.fernandez@it.uu.se",
                     ["computer", "no-questions-asked", "sports", "beer"], None),
           "2": User("2", "Albert", "", ["languages", "computer", "javascript"], None)}
-_services = []
+_requests = []
 
 
 lock = threading.Lock()
-SERVICE_COUNTER = 0
+REQUEST_COUNTER = 0
 
-def inc_service_counter():
+def inc_request_counter():
     with lock:
-        global SERVICE_COUNTER
-        SERVICE_COUNTER += 1
-        return SERVICE_COUNTER
+        global REQUEST_COUNTER
+        REQUEST_COUNTER += 1
+        return REQUEST_COUNTER
 
 class Database(object):
     def __init__(self):
         self._users = _users
-        self._services = _services
+        self._requests = _requests
 
     @property
     def users(self):
@@ -30,5 +30,5 @@ class Database(object):
         return self._users.get(id)
 
     @property
-    def services(self):
-        return self._services
+    def requests(self):
+        return self._requests

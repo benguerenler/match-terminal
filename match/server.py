@@ -4,7 +4,7 @@ import threading
 import json
 import config
 from db import Database
-from models import Service
+from models import Request
 from match import Matcher, NextInLineStrategy
 
 
@@ -22,7 +22,7 @@ class Server(object):
             # Be polite Server!
             while True:
                 id_user = conn.recv(config.USERID_SIZE)
-                if self.db.user(id_user):
+                if self.db.user(id_user) is not None:
                     break
                 else:
                     print "Please try again"
@@ -50,20 +50,20 @@ class Server(object):
 
     def post(self, conn):
         data = json.loads(conn.recv(config.POST_SIZE))
-        service = Service(**data)
-        self.db.services.append(service)
+        request = Request(**data)
+        self.db.requests.append(request)
 
         print "Request #%s: '%s', %s received from user %s" % (
-            service.serviceid, service.short_message, service.amount, service.requester)
+            request.requestid, request.short_message, request.amount, request.requester)
         print "Searching for a match..."
 
-        matched_user = self._match.select_match(service)
-        print "Request #%s match to user %s" % (service.serviceid, matched_user.userid)
+        matched_user = self._match.select_match(request)
+        print "Request #%s match to user %s" % (request.requestid, matched_user.userid)
         print "Request forwarded to user %s" % matched_user.userid
 
     def list_all(self, conn):
-        conn.sendall(json.dumps([service.formatting() for service in self.db.services]))
-        print "Requesting services"
+        conn.sendall(json.dumps([request.formatting() for request in self.db.requests]))
+        print "Requesting requests"
 
     def list_pending(self, conn):
         # ask for the userid
@@ -72,28 +72,28 @@ class Server(object):
 
         print "User %s requested update" % userid
 
-        conn.sendall(json.dumps([service.formatting() for service in user.pending]))
+        conn.sendall(json.dumps([request.formatting() for request in user.pending]))
 
         # Assumption: Receive request in the same order
-        for service in user.pending:
+        for request in user.pending:
             response = conn.recv(config.OPTION_SIZE)  # a or d
 
             # Remove pending request from user
-            user.pending.remove(service)
+            user.pending.remove(request)
 
-            print "Request %s send to user %s" % (service.serviceid, userid)
+            print "Request %s send to user %s" % (request.requestid, userid)
             if response == "a":
                 # Update service to be fulfilled and closed
-                service.responders.append(user)
-                print "User %s accepted request %s" % (userid, service.serviceid)
+                request.responders.append(user)
+                print "User %s accepted request %s" % (userid, request.requestid)
             else:
-                print "User %s rejected request %s" % (userid, service.serviceid)
+                print "User %s rejected request %s" % (userid, request.requestid)
 
                 # Contact another user
                 print "Searching for a new match..."
-                matched_user = self._match.select_match(service)
+                matched_user = self._match.select_match(request)
 
-                print "Request #%s match to user %s" % (service.serviceid, matched_user.userid)
+                print "Request #%s match to user %s" % (request.requestid, matched_user.userid)
                 print "Request forwarded to user %s" % matched_user.userid
 
     def start(self):

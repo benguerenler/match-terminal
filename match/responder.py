@@ -20,7 +20,7 @@ class Responder(ABCClient):
         self.socket.sendall("u")
         self.socket.sendall(self.userid)
 
-        offers = [models.Service(**service) for service in json.loads(self.socket.recv(config.POST_SIZE))]
+        offers = [models.Request(**request) for request in json.loads(self.socket.recv(config.POST_SIZE))]
 
         if not offers:  # List is empty
             print "You have no pending requests"

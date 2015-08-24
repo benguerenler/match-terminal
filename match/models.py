@@ -8,8 +8,8 @@ class ABCJSON(object):
         return {key[1:]: value for key, value in self.__dict__.iteritems()}
 
 
-class Service(ABCJSON):
-    def __init__(self, serviceid="", message="", amount="", deadline="", cancellable="",
+class Request(ABCJSON):
+    def __init__(self, requestid="", message="", amount="", deadline="", cancellable="",
                        requester="", responders=[], waiting_list=[]):
         self._requester = requester
         self._message = message
@@ -17,12 +17,12 @@ class Service(ABCJSON):
         self._deadline = deadline
         self._cancellable = cancellable
         self._responders = responders
-        self._serviceid = serviceid
+        self._requestid = requestid
         self._waiting_list = waiting_list
 
     @property
-    def serviceid(self):
-        return self._serviceid
+    def requestid(self):
+        return self._requestid
 
     @property
     def message(self):
@@ -57,7 +57,7 @@ class Service(ABCJSON):
         self._responders = responders
 
     def formatting(self):
-        return super(Service, self).formatting()
+        return super(Request, self).formatting()
 
 
 class User(ABCJSON):
@@ -91,8 +91,8 @@ class User(ABCJSON):
         return self._pending
 
     @pending.setter
-    def pending(self, services):
-        self._pending = services
+    def pending(self, requests):
+        self._pending = requests
 
     def formatting(self):
         return super(User, self).formatting()

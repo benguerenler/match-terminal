@@ -2,7 +2,7 @@ import json
 import config
 import db
 from datetime import datetime
-from models import Service
+from models import Request
 from abcclient import ABCClient
 from utils import decorator
 
@@ -48,11 +48,11 @@ class Requester(ABCClient):
         amount = self.get_input(Requester.PRICE)
         deadline = self.get_input(Requester.DEADLINE)
         cancellable = self.get_input(Requester.CANCELLABLE)
-        servid = db.inc_service_counter()
+        requestid = db.inc_request_counter()
 
         # Create service object
-        data = Service(message=message, amount=amount, deadline=deadline, cancellable=cancellable,
-                       serviceid=servid, requester=self.userid)
+        data = Request(message=message, amount=amount, deadline=deadline, cancellable=cancellable,
+                       requestid=requestid, requester=self.userid)
         self.socket.sendall(json.dumps(data.formatting()))
         print "Request posted to Match system"
 
@@ -60,12 +60,12 @@ class Requester(ABCClient):
         self.socket.sendall("l")
 
         data = self.socket.recv(config.POST_SIZE)
-        services = [Service(**service) for service in json.loads(data)]
+        requests = [Request(**request) for request in json.loads(data)]
         print "Listing all requests"
-        for service in services:
+        for request in requests:
             print "-----------------------------------"
             print "Amount to receive: %s\nDescription: %s\nDeadline: %s" % (
-                service.amount, service.message, service.deadline)
+                request.amount, request.message, request.deadline)
 
     def start(self):
         super(Requester, self).start()
