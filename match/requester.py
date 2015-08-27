@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import json
 from datetime import datetime
 
@@ -73,8 +75,8 @@ class Requester(ABCClient):
         while True:
             print "\nPlease use one of the following commands to:\n" \
                   "[p] Post a new request\n" \
-                  "[l] list all\n" \
                   "[x] Exit\n"
+                  # "[l] list all\n" \
 
             option = raw_input("> ")
             if option == "x":

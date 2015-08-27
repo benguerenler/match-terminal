@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import json
 
 from utils.abcclient import ABCClient
