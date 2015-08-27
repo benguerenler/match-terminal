@@ -60,7 +60,7 @@ class Server(object):
 
     def list_all(self, conn):
         conn.sendall(json.dumps([request.formatting() for request in self.db.requests]))
-        print "Requesting requests"
+        print "Listing all requests..."
 
     def list_pending(self, conn):
         # ask for the userid
@@ -81,7 +81,7 @@ class Server(object):
             print "Request %s send to user %s" % (request.requestid, userid)
             if response == "a":
                 # Update service to be fulfilled and closed
-                request.responders.append(user)
+                request.responders.append(userid)
                 print "User %s accepted request %s" % (userid, request.requestid)
             else:
                 print "User %s rejected request %s" % (userid, request.requestid)
